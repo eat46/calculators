@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { groups, calculators } from "./calculators/index.js";
+import Overview from "./calculators/Overview.jsx";
 
 export default function App() {
   const [symbol, setSymbol] = useState("群光 2385");
-  const [activeId, setActiveId] = useState(calculators[0]?.id ?? null);
+  const [activeId, setActiveId] = useState("overview");
 
   return (
     <div style={styles.shell}>
       <header style={styles.topbar}>
-        <span style={styles.brand}>Calculators</span>
+        <button
+          type="button"
+          onClick={() => setActiveId("overview")}
+          style={styles.brand}
+        >
+          Calculators
+        </button>
         <label style={styles.symbolLabel}>股票</label>
         <input
           type="text"
@@ -22,6 +29,16 @@ export default function App() {
       <div style={styles.body}>
         <aside style={styles.sidebar}>
           <nav>
+            <button
+              onClick={() => setActiveId("overview")}
+              style={{
+                ...styles.navItem,
+                ...styles.overviewItem,
+                ...(activeId === "overview" ? styles.navItemActive : null),
+              }}
+            >
+              總覽
+            </button>
             {groups.map((g) => (
               <div key={g.title} style={styles.group}>
                 <div style={styles.groupTitle}>{g.title}</div>
@@ -43,6 +60,10 @@ export default function App() {
         </aside>
 
         <main style={styles.main}>
+          <div style={{ display: activeId === "overview" ? "block" : "none" }}>
+            <Overview onSelect={setActiveId} />
+          </div>
+
           {/* 全部掛載、僅顯示當前一個 — 切換時各計算機的輸入與結果都會保留 */}
           {calculators.map((c) => (
             <div
@@ -73,7 +94,17 @@ const styles = {
     borderBottom: "0.5px solid #e5e7eb",
     background: "#fafafa",
   },
-  brand: { fontSize: 16, fontWeight: 600, marginRight: "auto" },
+  brand: {
+    fontSize: 16,
+    fontWeight: 600,
+    marginRight: "auto",
+    border: "none",
+    background: "transparent",
+    padding: 0,
+    color: "#1a1a1a",
+    fontFamily: "inherit",
+    cursor: "pointer",
+  },
   symbolLabel: { fontSize: 13, color: "#6b7280" },
   symbolInput: {
     fontSize: 15,
@@ -118,5 +149,6 @@ const styles = {
     cursor: "pointer",
   },
   navItemActive: { background: "#e5e7eb", fontWeight: 500 },
+  overviewItem: { marginBottom: 18 },
   main: { flex: 1, padding: 32 },
 };
