@@ -1,9 +1,5 @@
 # Calculators
 
-**[▶ Live Demo](https://calculators-nu-sage.vercel.app/)**
-
-![領息股殖利率反推買價 — 分層買價與估值判斷](docs/screenshot.png)
-
 一組給投資研究用的小工具集合（殖利率、成長率、除權息、情境估值等）。
 以 React + Vite 打造,單頁應用、側邊欄切換,所有計算皆在瀏覽器端完成,不需後端。
 
@@ -12,6 +8,10 @@ computation runs client-side — no backend required.
 
 > Built for my own use as a Taiwan equity investor — a set of calculators I kept
 > wanting while researching stocks, gathered into one place.
+
+**[▶ Live Demo](https://eat46-calculators.vercel.app/)**
+
+![領息股殖利率反推買價 — 分層買價與估值判斷](docs/screenshot.png)
 
 ## Tech stack
 
