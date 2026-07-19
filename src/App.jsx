@@ -1,36 +1,63 @@
 import { useState } from "react";
 import { groups, calculators } from "./calculators/index.js";
 import Overview from "./calculators/Overview.jsx";
+import useMediaQuery from "./shared/useMediaQuery.js";
 
 export default function App() {
   const [symbol, setSymbol] = useState("群光 2385");
   const [activeId, setActiveId] = useState("overview");
+  const [navOpen, setNavOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // 行動裝置:選單為滑出式抽屜,選定後自動關閉
+  const select = (id) => {
+    setActiveId(id);
+    if (isMobile) setNavOpen(false);
+  };
 
   return (
     <div style={styles.shell}>
       <header style={styles.topbar}>
-        <button
-          type="button"
-          onClick={() => setActiveId("overview")}
-          style={styles.brand}
-        >
+        {isMobile ? (
+          <button
+            type="button"
+            aria-label="開啟選單"
+            aria-expanded={navOpen}
+            onClick={() => setNavOpen((o) => !o)}
+            style={styles.hamburger}
+          >
+            ☰
+          </button>
+        ) : null}
+        <button type="button" onClick={() => select("overview")} style={styles.brand}>
           Calculators
         </button>
-        <label style={styles.symbolLabel}>股票</label>
+        {!isMobile ? <label style={styles.symbolLabel}>股票</label> : null}
         <input
           type="text"
           value={symbol}
           onChange={(e) => setSymbol(e.target.value)}
           placeholder="股票代號/名稱"
-          style={styles.symbolInput}
+          style={{ ...styles.symbolInput, ...(isMobile ? styles.symbolInputMobile : null) }}
         />
       </header>
 
       <div style={styles.body}>
-        <aside style={styles.sidebar}>
+        {/* 行動裝置抽屜開啟時的半透明遮罩,點擊關閉 */}
+        {isMobile && navOpen ? (
+          <div style={styles.backdrop} onClick={() => setNavOpen(false)} />
+        ) : null}
+
+        <aside
+          style={{
+            ...styles.sidebar,
+            ...(isMobile ? styles.sidebarMobile : null),
+            ...(isMobile && navOpen ? styles.sidebarMobileOpen : null),
+          }}
+        >
           <nav>
             <button
-              onClick={() => setActiveId("overview")}
+              onClick={() => select("overview")}
               style={{
                 ...styles.navItem,
                 ...styles.overviewItem,
@@ -45,7 +72,7 @@ export default function App() {
                 {g.items.map((c) => (
                   <button
                     key={c.id}
-                    onClick={() => setActiveId(c.id)}
+                    onClick={() => select(c.id)}
                     style={{
                       ...styles.navItem,
                       ...(c.id === activeId ? styles.navItemActive : null),
@@ -59,9 +86,9 @@ export default function App() {
           </nav>
         </aside>
 
-        <main style={styles.main}>
+        <main style={{ ...styles.main, ...(isMobile ? styles.mainMobile : null) }}>
           <div style={{ display: activeId === "overview" ? "block" : "none" }}>
-            <Overview onSelect={setActiveId} />
+            <Overview onSelect={select} />
           </div>
 
           {/* 全部掛載、僅顯示當前一個 — 切換時各計算機的輸入與結果都會保留 */}
@@ -94,6 +121,15 @@ const styles = {
     borderBottom: "0.5px solid #e5e7eb",
     background: "#fafafa",
   },
+  hamburger: {
+    fontSize: 20,
+    lineHeight: 1,
+    border: "none",
+    background: "transparent",
+    padding: 0,
+    color: "#1a1a1a",
+    cursor: "pointer",
+  },
   brand: {
     fontSize: 16,
     fontWeight: 600,
@@ -117,6 +153,7 @@ const styles = {
     padding: "6px 10px",
     width: 180,
   },
+  symbolInputMobile: { width: 130, minWidth: 0 },
   body: { display: "flex", minHeight: "calc(100vh - 57px)" },
   sidebar: {
     width: 220,
@@ -124,6 +161,29 @@ const styles = {
     borderRight: "0.5px solid #e5e7eb",
     padding: 16,
     background: "#fafafa",
+  },
+  // 行動裝置:抽屜預設收合到畫面左外側
+  sidebarMobile: {
+    position: "fixed",
+    top: 57,
+    left: 0,
+    bottom: 0,
+    width: 260,
+    zIndex: 30,
+    overflowY: "auto",
+    transform: "translateX(-100%)",
+    transition: "transform 0.2s ease",
+    boxShadow: "2px 0 8px rgba(0,0,0,0.08)",
+  },
+  sidebarMobileOpen: { transform: "translateX(0)" },
+  backdrop: {
+    position: "fixed",
+    top: 57,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: "rgba(0,0,0,0.35)",
+    zIndex: 20,
   },
   group: { marginBottom: 18 },
   groupTitle: {
@@ -150,5 +210,6 @@ const styles = {
   },
   navItemActive: { background: "#e5e7eb", fontWeight: 500 },
   overviewItem: { marginBottom: 18 },
-  main: { flex: 1, padding: 32 },
+  main: { flex: 1, padding: 32, minWidth: 0 },
+  mainMobile: { padding: "20px 16px" },
 };
