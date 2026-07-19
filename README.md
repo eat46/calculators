@@ -2,6 +2,8 @@
 
 **[▶ Live Demo](https://calculators-nu-sage.vercel.app/)**
 
+![領息股殖利率反推買價 — 分層買價與估值判斷](docs/screenshot.png)
+
 一組給投資研究用的小工具集合（殖利率、成長率、除權息、情境估值等）。
 以 React + Vite 打造,單頁應用、側邊欄切換,所有計算皆在瀏覽器端完成,不需後端。
 
@@ -41,7 +43,9 @@ actual URL in the `➜ Local:` line.
 
 ## Calculators
 
-Grouped by purpose in the sidebar:
+Grouped by purpose in the sidebar; the 總覽 overview lists them all:
+
+![總覽 — 依用途分組的計算機一覽](docs/overview.png)
 
 **成長率 (Growth rate)**
 
