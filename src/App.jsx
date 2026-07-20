@@ -4,7 +4,7 @@ import Overview from "./calculators/Overview.jsx";
 import useMediaQuery from "./shared/useMediaQuery.js";
 
 export default function App() {
-  const [symbol, setSymbol] = useState("群光 2385");
+  const [symbol, setSymbol] = useState("");
   const [activeId, setActiveId] = useState("overview");
   const [navOpen, setNavOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
