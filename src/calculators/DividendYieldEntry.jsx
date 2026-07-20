@@ -22,12 +22,12 @@ const MIN_COST = 1;
  * @param {number}  targetYield      目標殖利率門檻,以百分比傳入 (例:6.7 代表 6.70%)
  */
 export default function DividendYieldEntry({
-  symbol = "群光 2385",
-  price = 104.0,
-  cost = 132.77,
-  lowDividend = 6.1,
+  symbol = "",
+  price = 0,
+  cost = 0,
+  lowDividend = 4.0,
   highDividend = 7.2,
-  targetYield = 6.7,
+  targetYield = 5.0,
 }) {
   const [low, setLow] = useState(lowDividend);
   const [high, setHigh] = useState(highDividend);
@@ -50,11 +50,17 @@ export default function DividendYieldEntry({
     const normalPrice = mid / y;
     const optimisticPrice = safeHigh / y;
 
-    const currentYield = (safeLow / safePrice) * 100; // 用保守股利算現價殖利率
+    const hasPrice = safePrice > 0;
+    const currentYield = hasPrice ? (safeLow / safePrice) * 100 : null; // 用保守股利算現價殖利率
     const costYield = hasCost ? (safeLow / costInput) * 100 : null;
 
     let verdict;
-    if (safePrice <= floorPrice) {
+    if (!hasPrice) {
+      verdict = {
+        tone: "plain",
+        text: "請輸入現價,即可比對地板價 / 樂觀買價,判斷目前估值是否進場。",
+      };
+    } else if (safePrice <= floorPrice) {
       verdict = {
         tone: "safe",
         text: `現價 ${fmt(safePrice)} 已低於地板價 ${fmt(
@@ -115,7 +121,10 @@ export default function DividendYieldEntry({
           step={0.1}
           onChange={setCost}
         />
-        <Stat label="現價殖利率(保守)" value={pct(result.currentYield)} />
+        <Stat
+          label="現價殖利率(保守)"
+          value={result.currentYield == null ? "—" : pct(result.currentYield)}
+        />
       </div>
 
       <Slider
@@ -322,4 +331,5 @@ const verdictTone = {
   safe: { background: "#dcfce7", color: "#166534" },
   warn: { background: "#fef3c7", color: "#92400e" },
   danger: { background: "#fee2e2", color: "#991b1b" },
+  plain: { background: "#f3f4f6", color: "#6b7280" },
 };
